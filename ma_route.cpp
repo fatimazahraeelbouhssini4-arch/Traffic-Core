@@ -3,7 +3,7 @@
 #include<rlgl.h>
 
 // Couleurs personnalisées
-Color COULEUR_CIEL = {135, 206, 235, 255};
+Color COULEUR_L = {135, 206, 235, 255};
 Color COULEUR_HERBE = {34, 139, 34, 255};
 Color COULEUR_ASPHALTE = {50, 50, 50, 255};
 Color COULEUR_TROTTOIRS = {224, 212, 193, 255};
@@ -108,4 +108,5 @@ int main(){
     
     CloseWindow();
     return 0;
+
 }
