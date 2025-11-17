@@ -4,7 +4,7 @@
 #include <vector>
 
 // ---------- Parameters ----------
-const int SCREEN_W = 1280;
+const int SCREEN_W = 1200;
 const int SCREEN_H = 720;
 
 const float ROAD_WIDTH = 12.0f;
@@ -183,4 +183,5 @@ int main() {
 
     CloseWindow();
     return 0;
+
 }
