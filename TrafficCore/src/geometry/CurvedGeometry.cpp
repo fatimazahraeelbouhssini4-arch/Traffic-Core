@@ -1,0 +1,78 @@
+#include "geometry/CurvedGeometry.h"
+#include "raymath.h"
+#include "rlgl.h"
+
+CurvedGeometry::CurvedGeometry(Vector3 start, Vector3 control1, Vector3 control2, Vector3 end, float width)
+    : p0(start), p1(control1), p2(control2), p3(end), width(width), segments(30) {}
+
+Vector3 CurvedGeometry::CalculateBezierPoint(float t) const {
+    float u = 1 - t;
+    float tt = t * t;
+    float uu = u * u;
+    float uuu = uu * u;
+    float ttt = tt * t;
+    
+    Vector3 point = Vector3Scale(p0, uuu);
+    point = Vector3Add(point, Vector3Scale(p1, 3 * uu * t));
+    point = Vector3Add(point, Vector3Scale(p2, 3 * u * tt));
+    point = Vector3Add(point, Vector3Scale(p3, ttt));
+    
+    return point;
+}
+
+void CurvedGeometry::Draw() const {
+    DrawCurvedSurface();
+}
+
+void CurvedGeometry::DrawCurvedSurface() const {
+    std::vector<Vector3> curvePoints;
+    for (int i = 0; i <= segments; i++) {
+        float t = (float)i / segments;
+        curvePoints.push_back(CalculateBezierPoint(t));
+    }
+    
+    for (size_t i = 0; i < curvePoints.size() - 1; i++) {
+        Vector3 current = curvePoints[i];
+        Vector3 next = curvePoints[i + 1];
+        
+        Vector3 direction = Vector3Subtract(next, current);
+        direction = Vector3Normalize(direction);
+        Vector3 right = Vector3CrossProduct({0, 1, 0}, direction);
+        right = Vector3Normalize(right);
+        
+        Vector3 p1 = Vector3Add(current, Vector3Scale(right, width/2));
+        Vector3 p2 = Vector3Subtract(current, Vector3Scale(right, width/2));
+        Vector3 p3 = Vector3Add(next, Vector3Scale(right, width/2));
+        Vector3 p4 = Vector3Subtract(next, Vector3Scale(right, width/2));
+        
+        rlBegin(RL_QUADS);
+            rlColor4ub(50, 50, 50, 255);
+            rlVertex3f(p1.x, p1.y + 0.01f, p1.z);
+            rlVertex3f(p2.x, p2.y + 0.01f, p2.z);
+            rlVertex3f(p4.x, p4.y + 0.01f, p4.z);
+            rlVertex3f(p3.x, p3.y + 0.01f, p3.z);
+        rlEnd();
+    }
+}
+
+std::vector<Vector3> CurvedGeometry::GetPoints() const {
+    std::vector<Vector3> points;
+    for (int i = 0; i <= segments; i++) {
+        float t = (float)i / segments;
+        points.push_back(CalculateBezierPoint(t));
+    }
+    return points;
+}
+
+Vector3 CurvedGeometry::GetCenter() const {
+    return CalculateBezierPoint(0.5f);
+}
+
+float CurvedGeometry::GetLength() const {
+    auto points = GetPoints();
+    float length = 0;
+    for (size_t i = 0; i < points.size() - 1; i++) {
+        length += Vector3Distance(points[i], points[i + 1]);
+    }
+    return length;
+}
