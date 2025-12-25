@@ -1,38 +1,25 @@
-# Version minimum de CMake
 cmake_minimum_required(VERSION 3.10)
-
-# Nom du projet
 project(TrafficCore)
 
-# Standard C++
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Dossiers des sources et headers
-set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+# Dossiers
 set(INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
-set(BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/bin")
+set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
-# Inclure les headers
 include_directories(${INCLUDE_DIR})
 
-# Chercher Raylib
+# Raylib
 find_package(raylib CONFIG REQUIRED)
-if (raylib_FOUND)
-    message(STATUS "Raylib trouvé : ${raylib_LIBRARIES}")
-    include_directories(${raylib_INCLUDE_DIRS})
-else()
-    message(FATAL_ERROR "Raylib non trouvé !")
-endif()
 
-# Ajouter tous les fichiers sources
-file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp" "${INCLUDE_DIR}/*.h")
+# 1. Lister les fichiers de base (sans le main.cpp s'il existe dans src)
+file(GLOB CORE_SOURCES "${SRC_DIR}/Node.cpp" "${SRC_DIR}/RoadSegment.cpp")
 
-# Créer l'exécutable
-add_executable(TrafficCore ${SOURCES})
+# 2. Créer l'exécutable de test pour les routes
+# On prend le fichier dans demos/ et on lui ajoute les sources de Node et RoadSegment
+add_executable(test_roads demos/test_roads.cpp ${CORE_SOURCES})
+target_link_libraries(test_roads PRIVATE raylib)
 
-# Lier Raylib
-target_link_libraries(TrafficCore PRIVATE raylib)
-
-# Définir le dossier de sortie
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BUILD_DIR})
+# Dossier de sortie
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)

@@ -1,0 +1,5 @@
+# ninja log v7
+6	101	7879696908760913	CMakeFiles/test_roads.dir/src/Node.cpp.obj	371cb5e1219e6274
+9	408	7879696908790831	CMakeFiles/test_roads.dir/src/RoadSegment.cpp.obj	694ba599c2527836
+2	624	7879696908724191	CMakeFiles/test_roads.dir/demos/test_roads.cpp.obj	29dd953c31c5cb6f
+625	750	7879696914874978	test_roads.exe	89ad14b72eda83d
