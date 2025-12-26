@@ -1,8 +1,5 @@
 #include "RoadNetwork.h"
 #include <iostream>
-#include <queue>
-#include <map>
-#include <algorithm>
 
 RoadNetwork::RoadNetwork() : nextNodeId(1) {}
 
@@ -50,7 +47,7 @@ Node* RoadNetwork::FindNodeById(int id) const {
     return nullptr;
 }
 
-std::vector<Node*> RoadNetwork::FindPath(Node* start, Node* end) const {
+std::vector<Node*> RoadNetwork::FindPath(Node* /*start*/, Node* /*end*/) const {
     // TODO: Implémenter l'algorithme A* ou Dijkstra
     // Pour l'instant, retourner un vecteur vide
     std::vector<Node*> path;
@@ -91,7 +88,7 @@ void RoadNetwork::Clear() {
 }
 
 void RoadNetwork::PrintNetworkInfo() const {
-    std::cout << "=== Informations sur le réseau routier ===" << std::endl;
+    std::cout << "\n=== Informations sur le réseau routier ===" << std::endl;
     std::cout << "Nombre de noeuds: " << GetNodeCount() << std::endl;
     std::cout << "Nombre de segments: " << GetRoadSegmentCount() << std::endl;
     std::cout << "Nombre d'intersections: " << GetIntersectionCount() << std::endl;

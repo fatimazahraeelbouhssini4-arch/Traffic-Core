@@ -21,11 +21,11 @@ void Intersection::Draw() const {
     }
 }
 
-bool Intersection::CanEnter(Vehicle* vehicle) const {
+bool Intersection::CanEnter(Vehicle* /*vehicle*/) const {
     // TODO: Implémenter la logique de priorité
     return true;
 }
 
-void Intersection::Update(float deltaTime) {
+void Intersection::Update(float /*deltaTime*/) {
     // TODO: Gérer les feux tricolores, priorités, etc.
 }
