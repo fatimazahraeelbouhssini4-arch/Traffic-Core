@@ -1,0 +1,3 @@
+C:/Users/admin/Desktop/Smart-City/build/CMakeFiles/Traffic3D.dir
+C:/Users/admin/Desktop/Smart-City/build/CMakeFiles/edit_cache.dir
+C:/Users/admin/Desktop/Smart-City/build/CMakeFiles/rebuild_cache.dir
