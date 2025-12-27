@@ -42,7 +42,7 @@ rule CUSTOM_COMMAND
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = C:\msys64\mingw64\bin\cmake.exe --regenerate-during-build -S"C:\Users\admin\Desktop\PROGRAMATION ORIENTEE OBJET EN C++AND JAVA\MonProjetRaylib" -B"C:\Users\admin\Desktop\PROGRAMATION ORIENTEE OBJET EN C++AND JAVA\MonProjetRaylib\build"
+  command = C:\msys64\mingw64\bin\cmake.exe --regenerate-during-build -SC:\Users\admin\Desktop\Smart-City -BC:\Users\admin\Desktop\Smart-City\build
   description = Re-running CMake...
   generator = 1
 
