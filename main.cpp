@@ -4,6 +4,7 @@
 #include "geometry/StraightGeometry.h"
 #include "geometry/RoundaboutGeometry.h"
 #include "Intersection.h"
+#include "Node.h"
 #include <memory>
 #include <cmath>
 #include <string>
@@ -45,7 +46,6 @@ int main()
         Vector3{0.0f, 0.0f, 0.0f}, roundRadius, 15.0f, 1
     );
     roundGeo->loadDecoration("assets/models/fountain.glb");
-
     roundabout->setGeometry(std::move(roundGeo));
 
     // ================= SIDE ROAD =================
@@ -53,24 +53,110 @@ int main()
     sideRoad->setGeometry(std::make_unique<StraightGeometry>(
         Vector3{-500.0f, 0.0f, -distanceAvantMain}, sideLength, 40.0f, 2, VERTICAL
     ));
-// ================= NEW ROADS =================
-// North road
-auto northRoad = std::make_shared<RoadSegment>();
-northRoad->setGeometry(std::make_unique<StraightGeometry>(
-    Vector3{roundRadius+10.0f, 0.0f, 0.0f}, 1000.0f, 40.0f, 2, VERTICAL
-));
+
+    // ================= NORTH ROAD =================
+    auto northRoad = std::make_shared<RoadSegment>();
+    northRoad->setGeometry(std::make_unique<StraightGeometry>(
+        Vector3{roundRadius+10.0f, 0.0f, 0.0f}, 1000.0f, 40.0f, 2, VERTICAL
+    ));
+
+    // ================= NODES MAIN ROAD (4 voies début) =================
+    auto mainStart0 = std::make_shared<Node>(Vector3{-997.0f, 0.0f, -30.0f});
+    auto mainStart1 = std::make_shared<Node>(Vector3{-997.0f, 0.0f, -10.0f});
+    auto mainStart2 = std::make_shared<Node>(Vector3{-997.0f, 0.0f,  10.0f});
+    auto mainStart3 = std::make_shared<Node>(Vector3{-997.0f, 0.0f,  30.0f});
+
+    mainStart0->addRoad(mainRoad);
+    mainStart1->addRoad(mainRoad);
+    mainStart2->addRoad(mainRoad);
+    mainStart3->addRoad(mainRoad);
+
+    // ================= NODES MAIN ROAD (4 voies fin) =================
+    auto mainEnd0 = std::make_shared<Node>(Vector3{-50.0f, 0.0f, -30.0f});
+    auto mainEnd1 = std::make_shared<Node>(Vector3{-50.0f, 0.0f, -10.0f});
+    auto mainEnd2 = std::make_shared<Node>(Vector3{-50.0f, 0.0f,  10.0f});
+    auto mainEnd3 = std::make_shared<Node>(Vector3{-50.0f, 0.0f,  30.0f});
+
+    mainEnd0->addRoad(mainRoad);
+    mainEnd1->addRoad(mainRoad);
+    mainEnd2->addRoad(mainRoad);
+    mainEnd3->addRoad(mainRoad);
+
+    // ================= NODES SIDE ROAD (2 voies) =================
+    auto sideStart1 = std::make_shared<Node>(Vector3{-500.0f-10.0f, 0.0, -35.0 });
+    auto sideEnd1   = std::make_shared<Node>(Vector3{-500.0f-10.0f, 0.0, -2*distanceAvantMain });
+    auto sideStart2 = std::make_shared<Node>(Vector3{-500.0f+10.0f, 0.0, -35.0 });
+    auto sideEnd2   = std::make_shared<Node>(Vector3{-500.0f+10.0f, 0.0, -2*distanceAvantMain });
+
+    sideStart1->addRoad(sideRoad);
+    sideEnd1->addRoad(sideRoad);
+    sideEnd1->addRoad(mainRoad);
+
+    sideStart2->addRoad(sideRoad);
+    sideEnd2->addRoad(sideRoad);
+    sideEnd2->addRoad(mainRoad);
+
+  
+// ================= NODES NORTH ROAD  haut(4 voies) =================
+auto northNodeH0 = std::make_shared<Node>(Vector3{ roundRadius+5.0f, 0.0f, 20.0f });
+auto northNodeH1 = std::make_shared<Node>(Vector3{ roundRadius+5.0f, 0.0f, 497.0f });
+auto northNodeH2 = std::make_shared<Node>(Vector3{ roundRadius+15.0f, 0.0f, 20.0f });
+auto northNodeH3 = std::make_shared<Node>(Vector3{ roundRadius+15.0f, 0.0f, 497.0f });
+
+// ================= NODES NORTH ROAD  bas(4 voies) =========
+auto northNodeB0 = std::make_shared<Node>(Vector3{ roundRadius+5.0f, 0.0f, -20.0f });
+auto northNodeB1 = std::make_shared<Node>(Vector3{ roundRadius+5.0f, 0.0f, -497.0f });
+auto northNodeB2 = std::make_shared<Node>(Vector3{ roundRadius+15.0f, 0.0f, -20.0f });
+auto northNodeB3 = std::make_shared<Node>(Vector3{ roundRadius+15.0f, 0.0f, -497.0f });
+
+northNodeH0->addRoad(northRoad);
+northNodeH1->addRoad(northRoad);
+northNodeH2->addRoad(northRoad);
+northNodeH3->addRoad(northRoad);
+
+northNodeB0->addRoad(northRoad);
+northNodeB1->addRoad(northRoad);
+northNodeB2->addRoad(northRoad);
+northNodeB3->addRoad(northRoad);
+// ================= NODES AUTOUR DU ROND-POINT (centre de la 1ère voie) =================
+auto roundNode0 = std::make_shared<Node>(Vector3{ 42.5f, 0.0f,   0.0f });
+
+auto roundNode1 = std::make_shared<Node>(Vector3{ 30.05f, 0.0f,  30.05f });
+
+auto roundNode2 = std::make_shared<Node>(Vector3{  0.0f, 0.0f,  42.5f });
+
+auto roundNode3 = std::make_shared<Node>(Vector3{ -30.05f, 0.0f,  30.05f });
+
+auto roundNode4 = std::make_shared<Node>(Vector3{ -42.5f, 0.0f,   0.0f });
+
+auto roundNode5 = std::make_shared<Node>(Vector3{ -30.05f, 0.0f, -30.05f });
+
+auto roundNode6 = std::make_shared<Node>(Vector3{  0.0f, 0.0f, -42.5f });
+
+auto roundNode7 = std::make_shared<Node>(Vector3{ 30.05f, 0.0f, -30.05f });
+
+    roundNode0->addRoad(roundabout);
+    roundNode1->addRoad(roundabout);
+    roundNode2->addRoad(roundabout);
+    roundNode3->addRoad(roundabout);
+    roundNode4->addRoad(roundabout);
+    roundNode5->addRoad(roundabout);
+    roundNode6->addRoad(roundabout);
+    roundNode7->addRoad(roundabout);
+
+    // ================= NODES AU-DESSUS DU ROND-POINT pour sorite  (2 nodes) =================
+    auto exitNode0 = std::make_shared<Node>(Vector3{ 47.0f, 0.0f,  15.0f});
+    auto exitNode1 = std::make_shared<Node>(Vector3{ 47.0f, 0.0f,  -15.0f});
+
+    exitNode0->addRoad(roundabout);
+    exitNode1->addRoad(roundabout);
+  
 
     // ================= INTERSECTIONS =================
     Intersection roundaboutIntersection({0.0f,0.0f,0.0f});
     roundaboutIntersection.addRoad(mainRoad);
     roundaboutIntersection.addRoad(roundabout);
     roundaboutIntersection.addRoad(northRoad);
-
-
-
-    Intersection tIntersection({-500.0f,0.0f,-distanceAvantMain});
-    tIntersection.addRoad(mainRoad);
-    tIntersection.addRoad(sideRoad);
 
     // ================= BOUCLE =================
     float yaw = 0.0f;
@@ -110,8 +196,33 @@ northRoad->setGeometry(std::make_unique<StraightGeometry>(
         ClearBackground(SKYBLUE);
         BeginMode3D(camera);
             DrawPlane({0,-0.1f,0},{2000,2000},GREEN);
+
+            // Dessiner l’intersection du rond-point
             roundaboutIntersection.draw();
-            tIntersection.draw();
+
+            // Dessiner Nodes mainRoad
+            mainStart0->draw(); mainStart1->draw(); mainStart2->draw(); mainStart3->draw();
+            mainEnd0->draw(); mainEnd1->draw(); mainEnd2->draw(); mainEnd3->draw();
+
+            // Dessiner Nodes sideRoad
+            sideStart1->draw(); sideEnd1->draw();
+            sideStart2->draw(); sideEnd2->draw();
+
+            // Dessiner Nodes autour du rond-point
+            roundNode0->draw(); roundNode1->draw(); roundNode2->draw(); roundNode3->draw();
+            roundNode4->draw(); roundNode5->draw(); roundNode6->draw(); roundNode7->draw();
+            // Dessiner Nodes au-dessus du rond-point
+            exitNode0->draw(); exitNode1->draw();
+// ================= DRAW NORTH ROAD NODES haut ===================
+northNodeH0->draw();
+northNodeH1->draw();
+northNodeH2->draw();
+northNodeH3->draw();
+// ================= DRAW NORTH ROAD NODES bas =================
+northNodeB0->draw();
+northNodeB1->draw();
+northNodeB2->draw();
+northNodeB3->draw();
         EndMode3D();
         DrawFPS(10,10);
         EndDrawing();

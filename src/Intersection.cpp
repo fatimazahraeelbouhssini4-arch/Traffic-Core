@@ -1,17 +1,18 @@
-#pragma once
-#include <vector>
-#include <memory>
-#include "RoadSegment.h"
-#include <raylib.h>
+#include "Intersection.h"
 
-class Intersection {
-private:
-    Vector3 position;
-    std::vector<std::shared_ptr<RoadSegment>> roads;
+Intersection::Intersection(const Vector3& pos) : position(pos) {}
 
-public:
-    Intersection(const Vector3& pos);
-    void addRoad(std::shared_ptr<RoadSegment> road);
-    void draw() const;
-    Vector3 getPosition() const;
-};
+void Intersection::addRoad(std::shared_ptr<RoadSegment> road) {
+    roads.push_back(road);
+}
+
+void Intersection::draw() const {
+    for (auto& road : roads) {
+        if (road) road->draw();
+    }
+  
+}
+
+Vector3 Intersection::getPosition() const {
+    return position;
+}

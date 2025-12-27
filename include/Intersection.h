@@ -10,18 +10,8 @@ private:
     std::vector<std::shared_ptr<RoadSegment>> roads;
 
 public:
-    Intersection(const Vector3& pos) : position(pos) {}
-
-    void addRoad(std::shared_ptr<RoadSegment> road) {
-        roads.push_back(road);
-    }
-
-    void draw() const {
-        for (const auto& road : roads) {
-            if (road)
-                road->draw();
-        }
-    }
-
-    Vector3 getPosition() const { return position; }
+    Intersection(const Vector3& pos);
+    void addRoad(std::shared_ptr<RoadSegment> road);
+    void draw() const;
+    Vector3 getPosition() const;
 };
