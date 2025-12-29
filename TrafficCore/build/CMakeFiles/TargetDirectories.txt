@@ -1,0 +1,3 @@
+C:/Users/DELL/Smart-City/TrafficCore/build/CMakeFiles/Traffic3D.dir
+C:/Users/DELL/Smart-City/TrafficCore/build/CMakeFiles/edit_cache.dir
+C:/Users/DELL/Smart-City/TrafficCore/build/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,12 @@
+# ninja log v7
+20	145	7885827247822678	CMakeFiles/Traffic3D.dir/src/RoadNetwork.cpp.obj	5ad898ff15404141
+28	147	7885827247983222	CMakeFiles/Traffic3D.dir/src/geometry/CurvedGeometry.cpp.obj	2e5551d82998f02b
+45	342	7885827248132793	CMakeFiles/Traffic3D.dir/src/geometry/StraightGeometry.cpp.obj	d5e7f777b93d2d61
+24	867	7885827247902649	CMakeFiles/Traffic3D.dir/src/RoadSegment.cpp.obj	984010aa879807f0
+15	974	7885827247822678	CMakeFiles/Traffic3D.dir/src/Node.cpp.obj	cbf62560013c97c2
+10	1025	7885827247742731	CMakeFiles/Traffic3D.dir/src/Intersection.cpp.obj	abe0c4e67ba92926
+37	1114	7885827248028732	CMakeFiles/Traffic3D.dir/src/geometry/RoundaboutGeometry.cpp.obj	1eb49ced1bef076e
+7	1188	7885838909101478	CMakeFiles/Traffic3D.dir/demos/main.cpp.obj	857fb6a9476f5c30
+1189	1336	7885838920928582	Traffic3D.exe	b0df4d768d5980da
+10	1375	7885846518818975	CMakeFiles/Traffic3D.dir/demos/main.cpp.obj	857fb6a9476f5c30
+1376	1560	7885846532518479	Traffic3D.exe	b0df4d768d5980da
