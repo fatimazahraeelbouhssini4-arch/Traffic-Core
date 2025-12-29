@@ -20,7 +20,7 @@ void RoundaboutGeometry::Draw() const {
 }
 
 void RoundaboutGeometry::DrawRoadCircle() const {
-    rlBegin(RL_TRIANGLE_STRIP);
+    rlBegin(RL_LINES);
     rlColor4ub(50,50,50,255);
     for(int i=0;i<=segments;i++){
         float angle = (float)i/segments*2*PI;
