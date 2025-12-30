@@ -168,10 +168,11 @@ int main() {
         if (IsKeyPressed(KEY_ESCAPE)) {
             break;
         }
-
+        Color skyColor = {135, 206, 235, 255};     // Bleu ciel clair
+        Color groundColor = {100, 150, 100, 255};  // Vert herbe clair
         // ========== RENDU ==========
-        BeginDrawing();
-        ClearBackground({135, 206, 235, 255});  // Ciel bleu
+        BeginDrawing(); 
+        ClearBackground(skyColor); // Ciel bleu
 
         BeginMode3D(camera);
         
@@ -179,12 +180,13 @@ int main() {
         network.Draw();
         
         // Grille de référence
-        DrawGrid(100, 50.0f);
+        //DrawGrid(100, 50.0f);
         
         // Axes de référence (optionnel)
         DrawLine3D({0, 0, 0}, {50, 0, 0}, RED);    // Axe X
         DrawLine3D({0, 0, 0}, {0, 50, 0}, GREEN);  // Axe Y
         DrawLine3D({0, 0, 0}, {0, 0, 50}, BLUE);   // Axe Z
+        DrawPlane((Vector3){0.0f, -0.5f, 0.0f}, (Vector2){5000.0f, 5000.0f}, groundColor);
 
         EndMode3D();
 
@@ -216,6 +218,7 @@ int main() {
         DrawText("RESEAU:", 10, 368, 16, YELLOW);
         DrawText("10 Intersections | 2 Ronds-points", 10, 388, 13, WHITE);
         DrawText("1 Traffic Light  | 10 Segments", 10, 405, 13, WHITE);
+        
 
         // Indicateur du mode caméra
         if (freeCameraMode) {
@@ -228,6 +231,7 @@ int main() {
         }
 
         DrawText(TextFormat("FPS: %d", GetFPS()), 1320, 870, 16, LIME);
+
 
         EndDrawing();
     }
