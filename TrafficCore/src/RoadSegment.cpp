@@ -5,7 +5,7 @@
 #include "rlgl.h"
 
 RoadSegment::RoadSegment(Node* start, Node* end, int lanes, bool useCurvedConnection)
-    : startNode(start), endNode(end), lanes(lanes), laneWidth(3.5f) {
+    : startNode(start), endNode(end), lanes(lanes), laneWidth(12.0f) {
     
     CreateGeometry(useCurvedConnection);
     CreateSidewalks();
@@ -19,6 +19,8 @@ void RoadSegment::CreateGeometry(bool useCurvedConnection) {
     Vector3 startPos = startNode->GetPosition();
     Vector3 endPos = endNode->GetPosition();
     float totalWidth = lanes * laneWidth;
+  
+
 
     Vector3 direction = Vector3Normalize(Vector3Subtract(endPos, startPos));
 
