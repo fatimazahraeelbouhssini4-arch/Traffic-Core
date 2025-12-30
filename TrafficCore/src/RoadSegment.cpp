@@ -3,14 +3,14 @@
 #include "geometry/CurvedGeometry.h"
 #include "raymath.h"
 #include "rlgl.h"
+#include <cmath>
 
 RoadSegment::RoadSegment(Node* start, Node* end, int lanes, bool useCurvedConnection)
-    : startNode(start), endNode(end), lanes(lanes), laneWidth(16.0f) {  // Largeur de voie réaliste
+    : startNode(start), endNode(end), lanes(lanes), laneWidth(16.0f) {
     
     CreateGeometry(useCurvedConnection);
     CreateSidewalks();
 
-    // Ajouter cette route aux noeuds connectés
     startNode->AddConnectedRoad(this);
     endNode->AddConnectedRoad(this);
 }
@@ -22,16 +22,14 @@ void RoadSegment::CreateGeometry(bool useCurvedConnection) {
 
     Vector3 direction = Vector3Normalize(Vector3Subtract(endPos, startPos));
 
-    // Calculer les offsets en fonction du type de noeud et de la largeur de la route
-    float startOffset = startNode->GetRadius()*0.95f;
-    float endOffset = endNode->GetRadius()*0.95;
+    float startOffset = startNode->GetRadius() * 0.95f;
+    float endOffset = endNode->GetRadius() * 0.95f;
     
-    // Ajustement pour les ronds-points : offset plus grand
     if (startNode->GetType() == ROUNDABOUT) {
         startOffset = fmaxf(startNode->GetRadius() * 0.8f, totalWidth * 0.5f);
     }
     if (endNode->GetType() == ROUNDABOUT) {
-        endOffset = fmaxf(endNode->GetRadius()*0.8, totalWidth * 0.5f);
+        endOffset = fmaxf(endNode->GetRadius() * 0.8f, totalWidth * 0.5f);
     }
 
     Vector3 adjustedStart = Vector3Add(startPos, Vector3Scale(direction, startOffset));
@@ -53,14 +51,42 @@ void RoadSegment::CreateGeometry(bool useCurvedConnection) {
     }
 }
 
+float RoadSegment::CalculateIntersectionClearance(Node* node) const {
+    float baseRadius = node->GetRadius();
+    
+    switch (node->GetType()) {
+        case ROUNDABOUT:
+            return baseRadius + 15.0f;
+        
+        case TRAFFIC_LIGHT:
+            return baseRadius + 10.0f;
+        
+        case SIMPLE_INTERSECTION:
+        default:
+            int numConnections = node->GetConnectedRoads().size();
+            if (numConnections >= 3) {
+                return baseRadius + 8.0f;
+            } else {
+                return baseRadius + 6.0f;
+            }
+    }
+}
+
 void RoadSegment::CreateSidewalks() {
     auto roadPoints = geometry->GetPoints();
     if (roadPoints.size() < 2) return;
 
+    float roadLength = GetLength();
+    if (roadLength < 20.0f) return;
+
     float totalWidth = lanes * laneWidth;
-    float sidewalkWidth = 8.0f;  // Largeur réaliste d'un trottoir
-    float offset = (totalWidth / 2.0f) + (sidewalkWidth / 2.0f) + 0.4f;  // Gap entre route et trottoir
-    
+    float sidewalkWidth = 8.0f;
+    float offset = (totalWidth / 2.0f) + (sidewalkWidth / 2.0f) + 0.4f;
+
+    float startTrimDistance = CalculateIntersectionClearance(startNode);
+    float endTrimDistance = CalculateIntersectionClearance(endNode);
+
+    if (startTrimDistance + endTrimDistance >= roadLength * 0.9f) return;
 
     Sidewalk leftSidewalk, rightSidewalk;
     leftSidewalk.width = sidewalkWidth;
@@ -68,24 +94,20 @@ void RoadSegment::CreateSidewalks() {
     rightSidewalk.width = sidewalkWidth;
     rightSidewalk.height = 0.15f;
 
-    // Calculer les distances pour arrêter les trottoirs avant les intersections
-    float startTrimDistance = startNode->GetRadius() + 2.0f;  // Marge supplémentaire
-    float endTrimDistance = endNode->GetRadius() + 2.0f;
+    float distanceAlongRoad = 0.0f;
     
-    Vector3 startPos = startNode->GetPosition();
-    Vector3 endPos = endNode->GetPosition();
-
     for (size_t i = 0; i < roadPoints.size(); i++) {
-        Vector3 current = roadPoints[i];
-        
-        // Vérifier si ce point est trop proche d'une intersection
-        float distToStart = Vector3Distance(current, startPos);
-        float distToEnd = Vector3Distance(current, endPos);
-        
-        if (distToStart < startTrimDistance || distToEnd < endTrimDistance) {
-            continue;  // Sauter ce point (ne pas dessiner le trottoir ici)
+        if (i > 0) {
+            distanceAlongRoad += Vector3Distance(roadPoints[i - 1], roadPoints[i]);
         }
         
+        float distFromEnd = roadLength - distanceAlongRoad;
+        
+        if (distanceAlongRoad < startTrimDistance || distFromEnd < endTrimDistance) {
+            continue;
+        }
+        
+        Vector3 current = roadPoints[i];
         Vector3 direction = (i < roadPoints.size() - 1) ? 
                             Vector3Normalize(Vector3Subtract(roadPoints[i + 1], current)) : 
                             Vector3Normalize(Vector3Subtract(current, roadPoints[i - 1]));
@@ -96,15 +118,59 @@ void RoadSegment::CreateSidewalks() {
         rightSidewalk.path.push_back(Vector3Subtract(current, Vector3Scale(right, offset)));
     }
 
-    if (leftSidewalk.path.size() > 1) sidewalks.push_back(leftSidewalk);
-    if (rightSidewalk.path.size() > 1) sidewalks.push_back(rightSidewalk);
+    if (leftSidewalk.path.size() >= 2) {
+        sidewalks.push_back(leftSidewalk);
+    }
+    if (rightSidewalk.path.size() >= 2) {
+        sidewalks.push_back(rightSidewalk);
+    }
+}
+
+void RoadSegment::DrawCrosswalk(Vector3 position, Vector3 direction, float roadWidth) const {
+    // Paramètres du passage piéton adaptatifs
+    float stripWidth = roadWidth * 0.06f;        // 6% de la largeur de route
+    float stripLength = roadWidth * 0.12f;       // 12% de la largeur de route
+    float stripSpacing = roadWidth * 0.08f;      // 8% de la largeur de route
+    int numStrips = (int)(roadWidth / 10.0f) + 5; // Nombre adaptatif de bandes
+    
+    if (numStrips < 6) numStrips = 6;
+    if (numStrips > 12) numStrips = 12;
+    
+    Vector3 right = Vector3Normalize(Vector3CrossProduct({0, 1, 0}, direction));
+    
+    Color stripColor = {255, 255, 255, 255};
+    
+    // Dessiner les bandes blanches
+    for (int i = 0; i < numStrips; i++) {
+        float offset = (i - numStrips/2.0f) * stripSpacing;
+        Vector3 stripPos = Vector3Add(position, Vector3Scale(right, offset));
+        stripPos.y += 0.03f; // Légèrement au-dessus de la route
+        
+        // Calculer les 4 coins de la bande
+        Vector3 forward = Vector3Scale(direction, stripLength / 2.0f);
+        Vector3 side = Vector3Scale(right, stripWidth / 2.0f);
+        
+        Vector3 p1 = Vector3Add(Vector3Add(stripPos, forward), side);
+        Vector3 p2 = Vector3Add(Vector3Subtract(stripPos, forward), side);
+        Vector3 p3 = Vector3Subtract(Vector3Subtract(stripPos, forward), side);
+        Vector3 p4 = Vector3Subtract(Vector3Add(stripPos, forward), side);
+        
+        // Dessiner la bande
+        rlBegin(RL_QUADS);
+        rlColor4ub(stripColor.r, stripColor.g, stripColor.b, stripColor.a);
+        rlVertex3f(p1.x, p1.y, p1.z);
+        rlVertex3f(p2.x, p2.y, p2.z);
+        rlVertex3f(p3.x, p3.y, p3.z);
+        rlVertex3f(p4.x, p4.y, p4.z);
+        rlEnd();
+    }
 }
 
 void RoadSegment::DrawSidewalk(const Sidewalk& sidewalk) const {
     if (sidewalk.path.size() < 2) return;
 
-    Color sidewalkColor = {180, 180, 180, 255};  // Gris clair
-    Color borderColor = {100, 100, 100, 255};     // Bordure plus foncée
+    Color sidewalkColor = {180, 180, 180, 255};
+    Color borderColor = {100, 100, 100, 255};
 
     for (size_t i = 0; i < sidewalk.path.size() - 1; i++) {
         Vector3 current = sidewalk.path[i];
@@ -123,23 +189,54 @@ void RoadSegment::DrawSidewalk(const Sidewalk& sidewalk) const {
         p3.y += sidewalk.height;
         p4.y += sidewalk.height;
 
-        // Surface du trottoir
         rlBegin(RL_QUADS);
-            rlColor4ub(sidewalkColor.r, sidewalkColor.g, sidewalkColor.b, sidewalkColor.a);
-            rlVertex3f(p1.x, p1.y, p1.z);
-            rlVertex3f(p2.x, p2.y, p2.z);
-            rlVertex3f(p4.x, p4.y, p4.z);
-            rlVertex3f(p3.x, p3.y, p3.z);
+        rlColor4ub(sidewalkColor.r, sidewalkColor.g, sidewalkColor.b, sidewalkColor.a);
+        rlVertex3f(p1.x, p1.y, p1.z);
+        rlVertex3f(p2.x, p2.y, p2.z);
+        rlVertex3f(p4.x, p4.y, p4.z);
+        rlVertex3f(p3.x, p3.y, p3.z);
         rlEnd();
 
-        // Bordure du trottoir (ligne extérieure)
         DrawLine3D(p1, p3, borderColor);
     }
 }
 
 void RoadSegment::Draw() const {
     if (geometry) geometry->Draw();
-    for (const auto& sidewalk : sidewalks) DrawSidewalk(sidewalk);
+    
+    // Dessiner les trottoirs
+    for (const auto& sidewalk : sidewalks) 
+        DrawSidewalk(sidewalk);
+    
+    // Dessiner les passages piétons aux extrémités
+    auto roadPoints = geometry->GetPoints();
+    if (roadPoints.size() >= 2) {
+        float roadWidth = GetWidth();
+        float roadLength = GetLength();
+        
+        // Ne dessiner les passages piétons que sur les routes assez longues
+        if (roadLength > 25.0f) {
+            // Passage piéton au début
+            Vector3 startPos = roadPoints.front();
+            Vector3 startDir = Vector3Normalize(Vector3Subtract(roadPoints[1], roadPoints[0]));
+            
+            // Positionner le passage piéton légèrement en retrait
+            float startOffset = startNode->GetRadius() + 3.0f;
+            Vector3 crosswalkStart = Vector3Add(startPos, Vector3Scale(startDir, startOffset));
+            
+            DrawCrosswalk(crosswalkStart, startDir, roadWidth);
+            
+            // Passage piéton à la fin
+            Vector3 endPos = roadPoints.back();
+            Vector3 endDir = Vector3Normalize(Vector3Subtract(roadPoints[roadPoints.size()-1], 
+                                                              roadPoints[roadPoints.size()-2]));
+            
+            float endOffset = endNode->GetRadius() + 3.0f;
+            Vector3 crosswalkEnd = Vector3Subtract(endPos, Vector3Scale(endDir, endOffset));
+            
+            DrawCrosswalk(crosswalkEnd, endDir, roadWidth);
+        }
+    }
 }
 
 float RoadSegment::GetLength() const {
@@ -153,7 +250,6 @@ Vector3 RoadSegment::GetLanePosition(int laneIndex, float t) const {
     size_t n = points.size();
     if (n < 2) return points[0];
 
-    // Calcul de la position sur la longueur
     float total = (n-1) * t;
     size_t idx = (size_t)total;
     float localT = total - idx;
@@ -162,10 +258,9 @@ Vector3 RoadSegment::GetLanePosition(int laneIndex, float t) const {
 
     Vector3 pos = Vector3Lerp(points[idx], points[idx+1], localT);
 
-    // Décalage selon la voie
     Vector3 dir = Vector3Normalize(Vector3Subtract(points[idx+1], points[idx]));
     Vector3 right = Vector3Normalize(Vector3CrossProduct({0,1,0}, dir));
-    float laneOffset = - (GetWidth()/2.0f) + laneWidth * (0.5f + laneIndex);
+    float laneOffset = -(GetWidth()/2.0f) + laneWidth * (0.5f + laneIndex);
 
     return Vector3Add(pos, Vector3Scale(right, laneOffset));
 }

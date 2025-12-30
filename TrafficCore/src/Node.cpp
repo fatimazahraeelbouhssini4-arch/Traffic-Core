@@ -45,39 +45,7 @@ void Node::Draw() const {
             // Zone d'intersection carrée
             DrawCube(position, intersectionSize * 2, 0.01f, intersectionSize * 2, roadColor);
             
-            // Passages piétons adaptatifs
-            float stripWidth = 1.0f;
-            float stripLength = 3.5f;
-            float stripSpacing = 1.2f;
-            int numStrips = 4;
             
-            // Calculer la distance pour les passages piétons
-            float crosswalkDistance = intersectionSize + 1.5f;
-            
-            // Passage Nord
-            for (int i = 0; i < numStrips; i++) {
-                float offset = (i - numStrips/2.0f) * stripSpacing;
-                DrawCube({position.x + offset, position.y + 0.02f, position.z - crosswalkDistance}, 
-                        stripWidth, 0.01f, stripLength, lineColor);
-            }
-            // Passage Sud
-            for (int i = 0; i < numStrips; i++) {
-                float offset = (i - numStrips/2.0f) * stripSpacing;
-                DrawCube({position.x + offset, position.y + 0.02f, position.z + crosswalkDistance}, 
-                        stripWidth, 0.01f, stripLength, lineColor);
-            }
-            // Passage Est
-            for (int i = 0; i < numStrips; i++) {
-                float offset = (i - numStrips/2.0f) * stripSpacing;
-                DrawCube({position.x + crosswalkDistance, position.y + 0.02f, position.z + offset}, 
-                        stripLength, 0.01f, stripWidth, lineColor);
-            }
-            // Passage Ouest
-            for (int i = 0; i < numStrips; i++) {
-                float offset = (i - numStrips/2.0f) * stripSpacing;
-                DrawCube({position.x - crosswalkDistance, position.y + 0.02f, position.z + offset}, 
-                        stripLength, 0.01f, stripWidth, lineColor);
-            }
             
             // Feux tricolores aux 4 coins
             Vector3 corners[4] = {
@@ -118,48 +86,6 @@ void Node::Draw() const {
             // Intersection simple : carré gris
             DrawCube(position, intersectionSize * 2, 0.01f, intersectionSize * 2, roadColor);
             
-            // Passages piétons adaptatifs
-            float stripWidth = 0.8f;
-            float stripLength = 3.0f;
-            float stripSpacing = 1.0f;
-            int numStrips = 5;
-            
-            // Calculer la distance pour les passages piétons
-            float crosswalkDistance = intersectionSize + 1.2f;
-            
-            // Passages Nord
-            for (int i = 0; i < numStrips; i++) {
-                float offset = (i - numStrips/2.0f) * stripSpacing;
-                DrawCube({position.x + offset, position.y + 0.02f, position.z - crosswalkDistance}, 
-                        stripWidth, 0.01f, stripLength, lineColor);
-            }
-            
-            // Passages Sud
-            for (int i = 0; i < numStrips; i++) {
-                float offset = (i - numStrips/2.0f) * stripSpacing;
-                DrawCube({position.x + offset, position.y + 0.02f, position.z + crosswalkDistance}, 
-                        stripWidth, 0.01f, stripLength, lineColor);
-            }
-            
-            // Passages Est
-            for (int i = 0; i < numStrips; i++) {
-                float offset = (i - numStrips/2.0f) * stripSpacing;
-                DrawCube({position.x + crosswalkDistance, position.y + 0.02f, position.z + offset}, 
-                        stripLength, 0.01f, stripWidth, lineColor);
-            }
-            
-            // Passages Ouest
-            for (int i = 0; i < numStrips; i++) {
-                float offset = (i - numStrips/2.0f) * stripSpacing;
-                DrawCube({position.x - crosswalkDistance, position.y + 0.02f, position.z + offset}, 
-                        stripLength, 0.01f, stripWidth, lineColor);
-            }
-            
-            // Lignes jaunes au centre (optionnel)
-            DrawCube({position.x, position.y + 0.02f, position.z}, 
-                    intersectionSize * 1.6f, 0.01f, 0.15f, {255, 200, 0, 255});
-            DrawCube({position.x, position.y + 0.02f, position.z}, 
-                    0.15f, 0.01f, intersectionSize * 1.6f, {255, 200, 0, 255});
             
             break;
         }

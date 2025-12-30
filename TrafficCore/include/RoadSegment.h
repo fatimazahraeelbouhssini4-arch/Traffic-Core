@@ -10,11 +10,10 @@ class RoadSegment {
 private:
     Node* startNode;
     Node* endNode;
-    int lanes;              // Nombre de voies
-    float laneWidth;        // Largeur d'une voie
+    int lanes;
+    float laneWidth;
     std::unique_ptr<RoadGeometryStrategy> geometry;
 
-    // Trottoirs
     struct Sidewalk {
         std::vector<Vector3> path;
         float width;
@@ -25,13 +24,15 @@ private:
     void CreateGeometry(bool useCurvedConnection);
     void CreateSidewalks();
     void DrawSidewalk(const Sidewalk& sidewalk) const;
+    void DrawCrosswalk(Vector3 position, Vector3 direction, float roadWidth) const;  // AJOUTÉ
+    
+    float CalculateIntersectionClearance(Node* node) const;
 
 public:
     RoadSegment(Node* start, Node* end, int lanes, bool useCurvedConnection = true);
 
     void Draw() const;
 
-    // Getters
     Node* GetStartNode() const { return startNode; }
     Node* GetEndNode() const { return endNode; }
     int GetLanes() const { return lanes; }
@@ -39,8 +40,7 @@ public:
     float GetLength() const;
     RoadGeometryStrategy* GetGeometry() const { return geometry.get(); }
 
-    // Pour gérer les positions des véhicules sur chaque voie
-    Vector3 GetLanePosition(int laneIndex, float t) const; // t = 0..1 sur la longueur de la route
+    Vector3 GetLanePosition(int laneIndex, float t) const;
 };
 
 #endif
