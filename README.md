@@ -65,3 +65,5 @@ mkdir build && cd build
 cmake .. -G "MinGW Makefiles"
 cmake --build . --config Release
 ./SmartCity.exe
+La simulation :
+https://github.com/fatimazahraeelbouhssini4-arch/Traffic-Core/blob/main/simulation/simulation.mp4
