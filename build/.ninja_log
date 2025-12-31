@@ -1,0 +1,19 @@
+# ninja log v7
+70	739	7888439006433404	CMakeFiles/SmartCity.dir/TrafficCore/src/core/AssetManager.cpp.obj	5184eb2d6f0fae2
+14	3162	7888439005833731	CMakeFiles/SmartCity.dir/TrafficCore/src/Intersection.cpp.obj	910458ff448e2d3
+24	3397	7888439005953674	CMakeFiles/SmartCity.dir/TrafficCore/src/Node.cpp.obj	52d50cb6fad3eccc
+62	5343	7888439006323581	CMakeFiles/SmartCity.dir/TrafficCore/src/RoadSegment.cpp.obj	6a491e9a47425d03
+803	5598	7888439016387696	CMakeFiles/SmartCity.dir/TrafficCore/src/geometry/CurvedGeometry.cpp.obj	13230cb556a7e3fc
+3219	7740	7888439039494476	CMakeFiles/SmartCity.dir/TrafficCore/src/geometry/RoundaboutGeometry.cpp.obj	c3f2ddb6229384da
+3446	7945	7888439040333996	CMakeFiles/SmartCity.dir/TrafficCore/src/geometry/StraightGeometry.cpp.obj	83c3a0b2f16412fd
+5365	9119	7888439061022188	CMakeFiles/SmartCity.dir/TrafficCore/src/vehicles/Bus.cpp.obj	ad857ae53a55e778
+5734	9863	7888439065339681	CMakeFiles/SmartCity.dir/TrafficCore/src/vehicles/Car.cpp.obj	91bb7b137f21b050
+8	10830	7888439005763774	CMakeFiles/SmartCity.dir/TrafficCore/demos/boukhalf_simulation.cpp.obj	e0ef80f6823b7de3
+35	12125	7888439006173542	CMakeFiles/SmartCity.dir/TrafficCore/src/RoadNetwork.cpp.obj	4102597573dc5d1d
+7958	12167	7888439085837954	CMakeFiles/SmartCity.dir/TrafficCore/src/vehicles/ModelManager.cpp.obj	f2f8c377bbb6c419
+7760	13008	7888439083549252	CMakeFiles/SmartCity.dir/TrafficCore/src/vehicles/CarFactory.cpp.obj	dbdc70f40d03b36f
+9979	13430	7888439106676015	CMakeFiles/SmartCity.dir/TrafficCore/src/vehicles/Truck.cpp.obj	33a4f91ae4745a4a
+10839	13927	7888439114781391	CMakeFiles/SmartCity.dir/TrafficCore/src/vehicles/Vehicule.cpp.obj	3b3a02b5478f3652
+9154	14281	7888439099030387	CMakeFiles/SmartCity.dir/TrafficCore/src/vehicles/TrafficManager.cpp.obj	78bee2dcc8203e1
+12141	14866	7888439127284216	CMakeFiles/SmartCity.dir/TrafficCore/src/vehicles/VehiculeFactory.cpp.obj	67bd0d210cb50345
+14871	15555	7888439154398726	SmartCity.exe	29e3bdf485562657
