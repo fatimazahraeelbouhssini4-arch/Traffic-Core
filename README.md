@@ -49,5 +49,5 @@ Le projet propose une **interface graphique intégrée** avec un menu affiché �
 - **Bibliothèque graphique** : Raylib (visualisation 3D)
 - **Modèles 3D** : Kenney.nl (voitures low-poly)
 
-## Structure du projet
+
 
