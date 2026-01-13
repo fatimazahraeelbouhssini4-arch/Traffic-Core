@@ -1,0 +1,37 @@
+cmake_minimum_required(VERSION 3.15)
+project(SmartCity LANGUAGES CXX)
+
+# C++
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Raylib
+find_package(raylib CONFIG REQUIRED)
+
+# Sources auto
+file(GLOB_RECURSE SOURCES
+    src/*.cpp
+    demos/*.cpp
+)
+
+# Debug : afficher les fichiers trouvés
+message(STATUS "Sources trouvées :")
+foreach(f ${SOURCES})
+    message(STATUS "  ${f}")
+endforeach()
+
+# Executable
+add_executable(SmartCity ${SOURCES})
+
+# Includes
+target_include_directories(SmartCity PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+# Link
+target_link_libraries(SmartCity PRIVATE raylib)
+
+# Windows
+if(WIN32)
+    target_link_libraries(SmartCity PRIVATE winmm gdi32 opengl32)
+endif()
